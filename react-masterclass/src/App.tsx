@@ -1,27 +1,19 @@
 import { validateHeaderValue } from "http";
 import {useState} from "react";
+import styled from "styled-components";
+
+const Container = styled.div`
+  background-color: ${(props)=>props.theme.bgColor};
+`;
+const H1 = styled.h1`
+  color: ${(props)=>props.theme.textColor};
+`;
 
 function App() {
-  const [userName,setUserName] = useState("");
-  const onUserName = (event: React.FormEvent<HTMLInputElement>) => {
-    const {currentTarget:{value}}=event;
-    setUserName(value);
-  }
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("hello",userName);
-  }
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={onUserName}
-          value={userName}
-          type="text"
-          placeholder="username" />
-        <button>Log in</button>
-      </form>
-    </div>
+    <Container>
+      <H1>protected</H1>
+    </Container>
   );
 }
 
