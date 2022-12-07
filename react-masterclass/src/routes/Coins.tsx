@@ -17,12 +17,13 @@ const CoinsList = styled.ul``;
 const Coin = styled.li`
     background-color: white;
     color: ${(props)=>props.theme.bgColor};
-    padding: 20px;
     border-radius: 15px;
     margin-bottom: 10px;
     a{
         transition: color 0.2s ease-in;
-        display: block;
+        display: flex;
+        align-items: center;
+        padding: 20px;
     }
     &: hover{
         a{
@@ -32,12 +33,17 @@ const Coin = styled.li`
 `;
 const Title = styled.h1`
     font-size: 40px;
-    color: ${(props)=>props.theme.accentColor}
+    color: ${(props)=>props.theme.accentColor};
 `;
 const Loader = styled.span`
-    font-size: 40px;
-    color: ${(props)=>props.theme.textColor}
+    color: ${(props)=>props.theme.textColor};
     text-align: center;
+    display: block;
+`;
+const Img = styled.img`
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
 `;
 // const coins= [
 //     //https://api.coinpaprika.com/v1/coins
@@ -64,7 +70,6 @@ function Coins(){
             await(fetch('https://api.coinpaprika.com/v1/coins'))
         ).json();
         setCoins(json.slice(0,100));
-        console.log(coins);
     }
     useEffect(()=>{
         getCoins();
@@ -78,7 +83,16 @@ function Coins(){
         </Header>
         {loading ? <Loader>Loading...</Loader> :
             <CoinsList>
-                {coins.map((coin)=>(<Coin key={coin.id}><Link to={`/${coin.id}`}>{coin.name} &rarr; </Link></Coin>))}
+                {coins.map((coin)=>(<Coin key={coin.id}>
+                    <Link
+                    to={{
+                        pathname:`/${coin.id}`,
+                        state: {name: coin.name}
+                    }}>
+                        <Img src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} />
+                        {coin.name} &rarr;
+                    </Link>
+                </Coin>))}
             </CoinsList>
         }
     </Container>;
