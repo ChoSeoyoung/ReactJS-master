@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { theme } from "../theme";
+import { useQuery } from "react-query";
 import Header from "../components/Header";
 import { BrowserRouter, Switch, Route, Link, useRouteMatch } from "react-router-dom";
 import Price from "./Price";
 import Chart from "./Chart";
+import { fetchCoinInfo, fetchPriceInfo } from "../api";
 
 const Container = styled.div`
     padding: 0px 20px;
@@ -71,7 +73,7 @@ interface RouterParams {
 interface RouteState {
     name: string;
 }
-interface InfoData {
+interface InfoInterface {
     id: string;
     name: string;
     symbol: string;
@@ -127,72 +129,74 @@ interface PriceInterface {
 }
 
 function Coin(){
-    const [loading, setLoading] = useState(true);
     const {coinId}  = useParams<RouterParams>();
-    const [info,setInfo] = useState<InfoData>();
-    const [priceInfo,setPriceInfo] = useState<PriceInterface>();
+    const {isLoading:infoLoading, data:infoData} = useQuery<InfoInterface>(["info",coinId], ()=>fetchCoinInfo(coinId))
+    const {isLoading:priceLoading, data:priceData} = useQuery<PriceInterface>(["price",coinId], ()=>fetchPriceInfo(coinId))
     const priceMatch = useRouteMatch("/:coinId/price");
     const chartMatch = useRouteMatch("/:coinId/chart");
+    const loading = infoLoading || priceLoading;
     const {
         state
     } = useLocation<RouteState>();
-    useEffect(()=>{
-        (async()=>{
-            const infoData = await(
-                await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-            ).json();
-            const priceData = await(
-                await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}?quotes=KRW`)
-            ).json();
+    // const [info,setInfo] = useState<InfoInterface>();
+    // const [priceInfo,setPriceInfo] = useState<PriceInterface>();
+    // useEffect(()=>{
+    //     (async()=>{
+    //         const infoData = await(
+    //             await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+    //         ).json();
+    //         const priceData = await(
+    //             await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}?quotes=KRW`)
+    //         ).json();
 
-            setInfo(infoData);
-            setPriceInfo(priceData);
-            setLoading(false);
-        })();
-    },[coinId]);
+    //         setInfo(infoData);
+    //         setPriceInfo(priceData);
+    //         setLoading(false);
+    //     })();
+    // },[coinId]);
     return (<Container>
         <Header />
-        <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name }</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name }</Title>
         {loading ? (<Loader>Loading...</Loader>):(
             <>
             <Overview>
                 <OverviewItem>
                     <OverviewTitle>Logo</OverviewTitle>
                     <OverviewContent>
-                        <Img src={info?.logo} />
+                        <Img src={infoData?.logo} />
                     </OverviewContent>
                 </OverviewItem>
                 <hr />
                 <OverviewItem className="line">
                     <OverviewTitle>Symbol</OverviewTitle>
                     <OverviewContent>
-                        {info?.symbol}
+                        {infoData?.symbol}
                     </OverviewContent>
                 </OverviewItem>
                 <hr />
                 <OverviewItem>
                     <OverviewTitle>Rank</OverviewTitle>
                     <OverviewContent>
-                        {info?.rank}
+                        {infoData?.rank}
                     </OverviewContent>
                 </OverviewItem>
                 <hr />
                 <OverviewItem>
                     <OverviewTitle>가격</OverviewTitle>
                     <OverviewContent>
-                        ₩{priceInfo?.quotes.KRW.price.toFixed(2)}
+                        ₩{priceData?.quotes.KRW.price.toFixed(2)}
                     </OverviewContent>
                 </OverviewItem>
                 <hr />
                 <OverviewItem>
                     <OverviewTitle>총 시가(단위: 조)</OverviewTitle>
                     <OverviewContent>
-                        ₩{(Number(priceInfo?.quotes.KRW.market_cap)/1000000000000).toFixed(2)}
+                        ₩{(Number(priceData?.quotes.KRW.market_cap)/1000000000000).toFixed(2)}
                     </OverviewContent>
                 </OverviewItem>
             </Overview>
             <Description>
-                {info?.description}
+                {infoData?.description}
             </Description>
 
             <Tabs>

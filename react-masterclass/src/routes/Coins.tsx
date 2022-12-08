@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoins } from "../api";
 import Header from "../components/Header";
 
 const Container = styled.div`
@@ -119,24 +121,25 @@ interface ICoinInterface {
 }
 
 function Coins(){
-    const [loading, setLoading] = useState(true);
-    const [coins, setCoins] = useState<ICoinInterface[]>([]);
-    const getCoins = async() => {
-        const json = await(
-            await(fetch('https://api.coinpaprika.com/v1/tickers?quotes=KRW'))
-        ).json();
-        setCoins(json.slice(0,100));
-    }
-    useEffect(()=>{
-        getCoins();
-        setLoading(false);
-    },[]);
+    const { isLoading, data } = useQuery<ICoinInterface[]>("allcoins",fetchCoins); 
+    // const [loading, setLoading] = useState(true);
+    // const [coins, setCoins] = useState<ICoinInterface[]>([]);
+    // const getCoins = async() => {
+    //     const json = await(
+    //         await(fetch('https://api.coinpaprika.com/v1/tickers?quotes=KRW'))
+    //     ).json();
+    //     setCoins(json.slice(0,100));
+    // }
+    // useEffect(()=>{
+    //     getCoins();
+    //     setLoading(false);
+    // },[]);
     
 
     return <Container>
         <Header />
         <BodyWrapper>
-        {loading ? <Loader>Loading...</Loader> :
+        {isLoading ? <Loader>Loading...</Loader> :
             <>
             <Table>
                 <thead>
@@ -152,7 +155,7 @@ function Coins(){
                     </tr>
                 </thead>
                 <tbody>
-                    {coins?.map((coin)=>(
+                    {data?.slice(0, 100).map((coin)=>(
                         <tr key={coin.id}>
                             <td className="center">{coin.rank}</td>
                             <td className="left">
