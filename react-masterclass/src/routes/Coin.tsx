@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { theme } from "../theme";
 import { useQuery } from "react-query";
 import Header from "../components/Header";
 import { BrowserRouter, Switch, Route, Link, useRouteMatch } from "react-router-dom";

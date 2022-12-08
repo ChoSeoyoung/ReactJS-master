@@ -1,11 +1,11 @@
 import { DefaultTheme } from "styled-components";
 
-export const theme:DefaultTheme={
-    bgColor: "#dfe6e9",
-    textColor: "#2d3436",
-    primaryColor: "#00b894",
-    secondaryColor: "#e84393",
-    successColor: "#0984e3",
-    infoColor: "#6c5ce7",
-    dangerColor: "#d63031",
+export const lighttheme: DefaultTheme={
+    bgColor: "#EFEFEF",
+    textColor: "#2f3542",
+    primaryColor: "#22a6b3",
+    secondaryColor: "#f0932b",
+    successColor: "#192a56",
+    infoColor: "#0097e6",
+    dangerColor: "#c23616",
 };
