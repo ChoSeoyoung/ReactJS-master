@@ -20,7 +20,7 @@ const BodyWrapper = styled.div`
 `;
 const Table = styled.table`
     border: 1px solid black;
-    font-size: 14px;
+    font-size: 16px;
     width: 100%;
     th {
         border: 1px solid black;
@@ -55,7 +55,7 @@ const Table = styled.table`
             color: ${(props)=>props.theme.successColor};
         }
         &:hover{
-            font-size: 16px;
+            font-size: 18px;
         }
     }
 `;

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
-import { fetchCoinHistory } from "../api";
+import { fetchCoinHistory, fetchPriceInfo } from "../api";
 import ApexChart from "react-apexcharts";
 import styled from "styled-components";
 
@@ -13,29 +13,33 @@ interface ChartProps {
 interface IHistorical {
     time_open: number;
     time_close: number;
-    open: number;
-    high: number;
-    low: number;
-    close: number;
-    volume: number;
+    open: string;
+    high: string;
+    low: string;
+    close: string;
+    volume: string;
     market_cap: number;
 }
+//https://apexcharts.com/docs/series/
 function Chart({coinId} : ChartProps){
     const {isLoading,data} = useQuery<IHistorical[]>(["ohlcv",coinId],()=>fetchCoinHistory(coinId));
     return(
         <CoinWrapper>
-            {isLoading ? "Loading...":
+            {isLoading ? "Loading...": 
             <ApexChart 
-                type="line"
+                type="candlestick"
                 series={[
                     {
-                        name: "prices",
-                        data: data?.map(price  => price.close) as number[]
+                        data: data?.map((hist)=>
+                        {return{
+                            x:hist.close,
+                            y:[Number(hist.open).toFixed(3),Number(hist.high).toFixed(3),Number(hist.close).toFixed(3),Number(hist.low).toFixed(3)]
+                        }})
                     },
-                ]}
+                ] as any }
                 options={{
                     theme: {
-                        mode:"light"
+                            mode:"light"
                     },
                     chart:{
                         height: 900,
@@ -56,8 +60,7 @@ function Chart({coinId} : ChartProps){
                     fill: {
                         type: "gradient",
                     }
-                }}>
-            </ApexChart>}
+            }} /> }
         </CoinWrapper>
     );
 }

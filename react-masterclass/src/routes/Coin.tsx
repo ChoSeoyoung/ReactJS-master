@@ -17,29 +17,72 @@ const Loader = styled.span`
     text-align: center;
     display: block;
 `;
-const Title = styled.h3`
+const Title = styled.h2`
     color: ${(props)=>props.theme.textColor};
 `;
 const Img = styled.img`
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
+    margin: 0px 10px;
+`;
+const OWrapper = styled.div`
+    display: flex;
+    @media all and (max-width: 768px){
+        //브라우저 창 width가 768px보다 작아지는 순간부터 적용
+        //모바일
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    @media all and (min-width: 1024px){
+        //브라우저 창 width가 1024px보다 커지는 순간부터 적용
+        //데스크탑
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: flex-start;
+    }
+`;
+const IWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    .down{
+        position: relative;
+        top: 25px;
+    }
 `;
 const Overview = styled.div`
     background-color: ${(props)=>props.theme.primaryColor};
     display: flex;
     flex-direction: row;
     border-radius: 10px;
-    padding: 0px 10%;
+    justify-content: space-evenly;
+    @media all and (max-width: 768px){
+        //브라우저 창 width가 768px보다 작아지는 순간부터 적용
+        //모바일
+        width: 80vw;
+    }
+    @media all and (min-width: 1024px){
+        //브라우저 창 width가 1024px보다 커지는 순간부터 적용
+        //데스크탑
+        width: 30vw;
+    }
 `;
 const OverviewItem = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100px;
+    padding: 15px 5px;
 `;
-const OverviewTitle = styled.span`
+const OverviewTitle = styled.div`
     font-weight: 600;
-    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 50px;
+    padding-top: 5px;
 `
 const OverviewContent = styled.div`
     display: flex;
@@ -50,21 +93,50 @@ const OverviewContent = styled.div`
     text-align: center;
 `
 const Description = styled.p`
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    @media all and (max-width: 768px){
+        //브라우저 창 width가 768px보다 작아지는 순간부터 적용
+        //모바일
+        width: 80vw;
+    }
+    @media all and (min-width: 1024px){
+        //브라우저 창 width가 1024px보다 커지는 순간부터 적용
+        //데스크탑
+        width: 30vw;
+}
 `;
 const Tabs = styled.div`
     background-color: ${(props)=>props.theme.primaryColor};
     border: 0px;
     font-weight: 600;
     border-radius: 10px 10px 0px 0px; 
-    margin: 5px 5px;
+    margin: 0px 5px;
     display: flex;
     flex-direction: row;
-    jusitfy-content: align-evenly;
+    jusitfy-content: center;
     width: 150px;
+    height: 28px;
 `;
 const Tab = styled.div<{ isActive:boolean }>`
     padding: 5px 15px;
     color: ${(props)=>props.isActive ? props.theme.secondaryColor: props.theme.textColor}
+`;
+const SubPage = styled.div`
+    background-color: white;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    @media all and (max-width: 768px){
+        //브라우저 창 width가 768px보다 작아지는 순간부터 적용
+        //모바일
+        width: 80vw;
+    }
+    @media all and (min-width: 1024px){
+        //브라우저 창 width가 1024px보다 커지는 순간부터 적용
+        //데스크탑
+        width: 60vw;
+    }
 `;
 
 interface RouterParams {
@@ -130,16 +202,15 @@ interface PriceInterface {
 
 function Coin(){
     const {coinId}  = useParams<RouterParams>();
-    const {isLoading:infoLoading, data:infoData} = useQuery<InfoInterface>(["info",coinId], ()=>fetchCoinInfo(coinId))
-    const {isLoading:priceLoading, data:priceData} = useQuery<PriceInterface>(["price",coinId], ()=>fetchPriceInfo(coinId),{
-        refetchInterval: 5000,
-    })
+    const {isLoading:infoLoading, data:infoData} = useQuery<InfoInterface>(["info",coinId], ()=>fetchCoinInfo(coinId));
+    const {isLoading:priceLoading, data:priceData} = useQuery<PriceInterface>(["price",coinId], ()=>fetchPriceInfo(coinId));
     const priceMatch = useRouteMatch("/:coinId/price");
     const chartMatch = useRouteMatch("/:coinId/chart");
     const loading = infoLoading || priceLoading;
     const {
         state
     } = useLocation<RouteState>();
+    console.log(priceData);
     // const [info,setInfo] = useState<InfoInterface>();
     // const [priceInfo,setPriceInfo] = useState<PriceInterface>();
     // useEffect(()=>{
@@ -158,71 +229,61 @@ function Coin(){
     // },[coinId]);
     return (<Container>
         <Header />
-        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name }</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : <><Img src={infoData?.logo} />{infoData?.name}({infoData?.symbol})</> }</Title>
         {loading ? (<Loader>Loading...</Loader>):(
-            <>
-            <Overview>
-                <OverviewItem>
-                    <OverviewTitle>Logo</OverviewTitle>
-                    <OverviewContent>
-                        <Img src={infoData?.logo} />
-                    </OverviewContent>
-                </OverviewItem>
-                <hr />
-                <OverviewItem className="line">
-                    <OverviewTitle>Symbol</OverviewTitle>
-                    <OverviewContent>
-                        {infoData?.symbol}
-                    </OverviewContent>
-                </OverviewItem>
-                <hr />
-                <OverviewItem>
-                    <OverviewTitle>Rank</OverviewTitle>
-                    <OverviewContent>
-                        {infoData?.rank}
-                    </OverviewContent>
-                </OverviewItem>
-                <hr />
-                <OverviewItem>
-                    <OverviewTitle>가격</OverviewTitle>
-                    <OverviewContent>
-                        ₩{priceData?.quotes.KRW.price.toFixed(2)}
-                    </OverviewContent>
-                </OverviewItem>
-                <hr />
-                <OverviewItem>
-                    <OverviewTitle>총 시가(단위: 조)</OverviewTitle>
-                    <OverviewContent>
-                        ₩{(Number(priceData?.quotes.KRW.market_cap)/1000000000000).toFixed(2)}
-                    </OverviewContent>
-                </OverviewItem>
-            </Overview>
-            <Description>
-                {infoData?.description}
-            </Description>
+            <OWrapper>
+                <IWrapper>
+                <Tabs>
+                        <Tab isActive={chartMatch !== null}>
+                            <Link to={`/${coinId}/chart`}>Chart</Link>
+                        </Tab>
+                        <hr />
+                        <Tab isActive={priceMatch !== null}>
+                        <Link to={`/${coinId}/price`}>Price</Link>
+                        </Tab>
+                    </Tabs>
 
-            <Tabs>
-                <Tab isActive={chartMatch !== null}>
-                    <Link to={`/${coinId}/chart`}>Chart</Link>
-                </Tab>
-                <hr />
-                <Tab isActive={priceMatch !== null}>
-                <Link to={`/${coinId}/price`}>Price</Link>
-                </Tab>
-            </Tabs>
-
-            <Switch>
-                <Route path={`/${coinId}/price`}>
-                    <Price />
-                </Route>
-                 <Route path={`/${coinId}/chart`}>
-                    <Chart coinId={coinId} />
-                </Route>
-            </Switch>
-
-            </>
+                    <SubPage>
+                        <Switch>
+                            <Route path={`/${coinId}/price`}>
+                                <Price coinId={coinId} />
+                            </Route>
+                            <Route path={`/${coinId}/chart`}>
+                                <Chart coinId={coinId} />
+                            </Route>
+                        </Switch>
+                    </SubPage>
+                </IWrapper>
+                <IWrapper>
+                    <Overview className="down">            
+                        <OverviewItem>
+                            <OverviewTitle>Rank</OverviewTitle>
+                            <OverviewContent>
+                                {infoData?.rank}
+                            </OverviewContent>
+                        </OverviewItem>
+                    
+                        <OverviewItem>
+                            <OverviewTitle>가격<br/>(단위: 만)</OverviewTitle>
+                            <OverviewContent>
+                                ₩{(Number(priceData?.quotes.KRW.price)/10000).toFixed(2)}
+                            </OverviewContent>
+                        </OverviewItem>
+                
+                        <OverviewItem>
+                            <OverviewTitle>총 시가<br />(단위: 조)</OverviewTitle>
+                            <OverviewContent>
+                                ₩{(Number(priceData?.quotes.KRW.market_cap)/1000000000000).toFixed(2)}
+                            </OverviewContent>
+                        </OverviewItem>
+                    </Overview>
+                    <Description className="down">
+                        {infoData?.description}
+                    </Description>
+                </IWrapper>
+            </OWrapper>
         )}
-    </Container>);
+I </Container>);
 }
 
 export default Coin;
