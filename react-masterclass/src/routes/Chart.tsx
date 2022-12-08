@@ -5,7 +5,6 @@ import ApexChart from "react-apexcharts";
 import styled from "styled-components";
 
 const CoinWrapper = styled.div`
-    border: 1px solid black;
 `;
 
 interface ChartProps {

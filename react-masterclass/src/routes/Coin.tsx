@@ -131,7 +131,9 @@ interface PriceInterface {
 function Coin(){
     const {coinId}  = useParams<RouterParams>();
     const {isLoading:infoLoading, data:infoData} = useQuery<InfoInterface>(["info",coinId], ()=>fetchCoinInfo(coinId))
-    const {isLoading:priceLoading, data:priceData} = useQuery<PriceInterface>(["price",coinId], ()=>fetchPriceInfo(coinId))
+    const {isLoading:priceLoading, data:priceData} = useQuery<PriceInterface>(["price",coinId], ()=>fetchPriceInfo(coinId),{
+        refetchInterval: 5000,
+    })
     const priceMatch = useRouteMatch("/:coinId/price");
     const chartMatch = useRouteMatch("/:coinId/chart");
     const loading = infoLoading || priceLoading;

@@ -1,5 +1,6 @@
 import {Link} from "react-router-dom";
 import styled from "styled-components";
+import { Helmet } from "react-helmet";
 
 const Container = styled.header`
     display: flex;
@@ -13,8 +14,10 @@ const Title = styled.h1`
 
 function Header(){
     return (<Container>
-        <Link to={`/`}><Title>코인</Title></Link>
-
+        <Helmet title="코인" />
+        <Link to={`/`}>
+            <Title>코인</Title>
+        </Link>
     </Container>);
 }
 
