@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Header from "../components/Header";
 
-const Container = styled.div``;
+const Container = styled.div`
+    padding: 0px 20px;
+`;
 const Loader = styled.span`
     color: ${(props)=>props.theme.textColor};
     text-align: center;

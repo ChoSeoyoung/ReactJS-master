@@ -3,12 +3,20 @@ import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { theme } from "../theme";
 import Header from "../components/Header";
+import { BrowserRouter, Switch, Route, Link, useRouteMatch } from "react-router-dom";
+import Price from "./Price";
+import Chart from "./Chart";
 
-const Container = styled.div``;
+const Container = styled.div`
+    padding: 0px 20px;
+`;
 const Loader = styled.span`
     color: ${(props)=>props.theme.textColor};
     text-align: center;
     display: block;
+`;
+const Title = styled.h3`
+    color: ${(props)=>props.theme.textColor};
 `;
 const Img = styled.img`
     width: 30px;
@@ -19,7 +27,7 @@ const Overview = styled.div`
     display: flex;
     flex-direction: row;
     border-radius: 10px;
-    padding: 0px 80px;
+    padding: 0px 10%;
 `;
 const OverviewItem = styled.div`
     display: flex;
@@ -40,6 +48,21 @@ const OverviewContent = styled.div`
     text-align: center;
 `
 const Description = styled.p`
+`;
+const Tabs = styled.div`
+    background-color: ${(props)=>props.theme.primaryColor};
+    border: 0px;
+    font-weight: 600;
+    border-radius: 10px 10px 0px 0px; 
+    margin: 5px 5px;
+    display: flex;
+    flex-direction: row;
+    jusitfy-content: align-evenly;
+    width: 150px;
+`;
+const Tab = styled.div<{ isActive:boolean }>`
+    padding: 5px 15px;
+    color: ${(props)=>props.isActive ? props.theme.secondaryColor: props.theme.textColor}
 `;
 
 interface RouterParams {
@@ -108,6 +131,8 @@ function Coin(){
     const {coinId}  = useParams<RouterParams>();
     const [info,setInfo] = useState<InfoData>();
     const [priceInfo,setPriceInfo] = useState<PriceInterface>();
+    const priceMatch = useRouteMatch("/:coinId/price");
+    const chartMatch = useRouteMatch("/:coinId/chart");
     const {
         state
     } = useLocation<RouteState>();
@@ -127,6 +152,7 @@ function Coin(){
     },[coinId]);
     return (<Container>
         <Header />
+        <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name }</Title>
         {loading ? (<Loader>Loading...</Loader>):(
             <>
             <Overview>
@@ -168,6 +194,26 @@ function Coin(){
             <Description>
                 {info?.description}
             </Description>
+
+            <Tabs>
+                <Tab isActive={chartMatch !== null}>
+                    <Link to={`/${coinId}/chart`}>Chart</Link>
+                </Tab>
+                <hr />
+                <Tab isActive={priceMatch !== null}>
+                <Link to={`/${coinId}/price`}>Price</Link>
+                </Tab>
+            </Tabs>
+
+            <Switch>
+                <Route path={`/${coinId}/price`}>
+                    <Price />
+                </Route>
+                 <Route path={`/${coinId}/chart`}>
+                    <Chart />
+                </Route>
+            </Switch>
+
             </>
         )}
     </Container>);
