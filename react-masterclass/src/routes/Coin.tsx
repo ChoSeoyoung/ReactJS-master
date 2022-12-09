@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery } from "react-query";
-import Header from "../components/Header";
-import { BrowserRouter, Switch, Route, Link, useRouteMatch } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, RouteMatch } from "react-router-dom";
 import Price from "./Price";
 import Chart from "./Chart";
 import { fetchCoinInfo, fetchPriceInfo } from "../api";
@@ -126,6 +125,7 @@ const SubPage = styled.div`
     background-color: white;
     border-radius: 10px;
     margin-bottom: 15px;
+    height: 450px;
     @media all and (max-width: 768px){
         //브라우저 창 width가 768px보다 작아지는 순간부터 적용
         //모바일
@@ -138,11 +138,13 @@ const SubPage = styled.div`
     }
 `;
 
-interface RouterParams {
+interface RouteParams {
     coinId: string;
 }
 interface RouteState {
-    name: string;
+    state:{
+        name: string;
+    }
 }
 interface InfoInterface {
     id: string;
@@ -200,16 +202,13 @@ interface PriceInterface {
 }
 
 function Coin(){
-    const {coinId}  = useParams<RouterParams>();
+    const {coinId} = useParams();
     const {isLoading:infoLoading, data:infoData} = useQuery<InfoInterface>(["info",coinId], ()=>fetchCoinInfo(coinId));
     const {isLoading:priceLoading, data:priceData} = useQuery<PriceInterface>(["price",coinId], ()=>fetchPriceInfo(coinId));
-    const priceMatch = useRouteMatch("/:coinId/price");
-    const chartMatch = useRouteMatch("/:coinId/chart");
+    const priceMatch = useMatch("/:coinId/price");
+    const chartMatch = useMatch("/:coinId/chart");
     const loading = infoLoading || priceLoading;
-    const {
-        state
-    } = useLocation<RouteState>();
-    console.log(priceData);
+    const {state} = useLocation() as RouteState;
     // const [info,setInfo] = useState<InfoInterface>();
     // const [priceInfo,setPriceInfo] = useState<PriceInterface>();
     // useEffect(()=>{
@@ -227,30 +226,25 @@ function Coin(){
     //     })();
     // },[coinId]);
     return (<Container>
-        <Header />
         <Title>{state?.name ? state.name : loading ? "Loading..." : <><Img src={infoData?.logo} />{infoData?.name}({infoData?.symbol})</> }</Title>
         {loading ? (<Loader>Loading...</Loader>):(
             <OWrapper>
                 <IWrapper>
                 <Tabs>
                         <Tab isActive={chartMatch !== null}>
-                            <Link to={`/${coinId}/chart`}>Chart</Link>
+                            <Link to={`chart`}>Chart</Link>
                         </Tab>
                         <hr />
                         <Tab isActive={priceMatch !== null}>
-                        <Link to={`/${coinId}/price`}>Price</Link>
+                        <Link to={`price`}>Price</Link>
                         </Tab>
                     </Tabs>
 
                     <SubPage>
-                        <Switch>
-                            <Route path={`/${coinId}/price`}>
-                                <Price coinId={coinId} />
-                            </Route>
-                            <Route path={`/${coinId}/chart`}>
-                                <Chart coinId={coinId} />
-                            </Route>
-                        </Switch>
+                        <Routes>
+                            <Route path="price" element={<Price coinId={coinId} />} />
+                            <Route path="chart" element={<Chart coinId={coinId} />} />
+                        </Routes>
                     </SubPage>
                 </IWrapper>
                 <IWrapper>

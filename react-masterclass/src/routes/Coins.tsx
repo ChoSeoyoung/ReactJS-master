@@ -3,7 +3,6 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
-import Header from "../components/Header";
 
 const Container = styled.div`
     padding: 0px 20px;
@@ -59,32 +58,12 @@ const Table = styled.table`
         }
     }
 `;
-const CoinsList = styled.ul``;
-const Coin = styled.li`
-    background-color: white;
-    color: ${(props)=>props.theme.bgColor};
-    border-radius: 15px;
-    margin-bottom: 10px;
-    a{
-    }
-    &: hover{
-        a{
-            color: ${(props)=>props.theme.primaryColor}
-        }
-    }
-`;
 const Img = styled.img`
     width: 16px;
     height: 16px;
     margin-left: 5px;
     margin-right: 10px;
 `;
-// const coins= [
-//     //https://api.coinpaprika.com/v1/coins
-//     {"id":"btc-bitcoin","name":"Bitcoin","symbol":"BTC","rank":1,"is_new":false,"is_active":true,"type":"coin"},
-//     {"id":"eth-ethereum","name":"Ethereum","symbol":"ETH","rank":2,"is_new":false,"is_active":true,"type":"coin"},
-//     {"id":"usdt-tether","name":"Tether","symbol":"USDT","rank":3,"is_new":false,"is_active":true,"type":"token"}
-// ];
 
 interface ICoinInterface {
     id: string;
@@ -137,7 +116,6 @@ function Coins(){
     
 
     return <Container>
-        <Header />
         <BodyWrapper>
         {isLoading ? <Loader>Loading...</Loader> :
             <>
@@ -159,11 +137,9 @@ function Coins(){
                         <tr key={coin.id}>
                             <td className="center">{coin.rank}</td>
                             <td className="left">
-                              <Link
-                                to={{
-                                    pathname:`/${coin.id}`,
-                                    state: {name: coin.name}
-                                }}>
+                            <Link
+                                to={`coin/${coin.id}`}
+                                state={{name:coin.name}}>
                                 <Img src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} />
                                     {coin.name} &rarr;
                                 </Link>
