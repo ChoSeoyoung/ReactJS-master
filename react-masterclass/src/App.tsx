@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { ThemeProvider } from 'styled-components';
+import { lighttheme, darktheme } from './theme';
 
 const GlobalStyle = createGlobalStyle`
 <style> @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap'); </style>
@@ -68,13 +71,23 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
+  const [isDark,setIsDark] = useState(false);
+  const toggleDark = () => setIsDark(current=>!current);
   return (
     <>
+    <ThemeProvider theme={isDark ? lighttheme : darktheme}>
       <GlobalStyle />
         <Header />
+        <div style={{margin:"20px"}}>
+          👇🏻LightMode/DarkMode<br/>
+          <button 
+            style={{margin: "10px 0px" }}
+            onClick={toggleDark}>Change Mode</button>
+        </div>
         <Outlet />
         <Footer />
       <ReactQueryDevtools initialIsOpen={true}/>
+    </ThemeProvider>
     </>
   );
 }

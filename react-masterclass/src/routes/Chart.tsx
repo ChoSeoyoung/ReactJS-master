@@ -6,7 +6,6 @@ import styled from "styled-components";
 
 const CoinWrapper = styled.div`
 `;
-
 interface ChartProps {
     coinId: string;
 }

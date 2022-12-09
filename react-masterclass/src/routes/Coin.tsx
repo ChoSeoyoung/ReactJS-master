@@ -91,7 +91,7 @@ const OverviewContent = styled.div`
     text-align: center;
 `
 const Description = styled.p`
-    background-color: white;
+    background-color: ${(props)=>props.theme.subBgColor};
     border-radius: 10px;
     padding: 20px;
     @media all and (max-width: 768px){
@@ -122,7 +122,7 @@ const Tab = styled.div<{ isActive:boolean }>`
     color: ${(props)=>props.isActive ? props.theme.secondaryColor: props.theme.textColor}
 `;
 const SubPage = styled.div`
-    background-color: white;
+    background-color: ${(props)=>props.theme.subBgColor};
     border-radius: 10px;
     margin-bottom: 15px;
     height: 450px;
