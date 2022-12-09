@@ -3,6 +3,7 @@ import Router from "./Router";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const GlobalStyle = createGlobalStyle`
 <style> @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap'); </style>
@@ -72,6 +73,7 @@ function App() {
       <GlobalStyle />
         <Header />
         <Outlet />
+        <Footer />
       <ReactQueryDevtools initialIsOpen={true}/>
     </>
   );

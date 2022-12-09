@@ -226,7 +226,7 @@ function Coin(){
     //     })();
     // },[coinId]);
     return (<Container>
-        <Title>{state?.name ? state.name : loading ? "Loading..." : <><Img src={infoData?.logo} />{infoData?.name}({infoData?.symbol})</> }</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : <><Img src={infoData?.logo} />{infoData?.name} ({infoData?.symbol})</> }</Title>
         {loading ? (<Loader>Loading...</Loader>):(
             <OWrapper>
                 <IWrapper>
@@ -276,7 +276,7 @@ function Coin(){
                 </IWrapper>
             </OWrapper>
         )}
-I </Container>);
+ </Container>);
 }
 
 export default Coin;
